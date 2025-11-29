@@ -1,0 +1,277 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: #000;
+}
+
+#canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+.toggle-nav-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 101;
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    pointer-events: auto;
+}
+
+.toggle-nav-btn:hover {
+    background: rgba(66, 133, 244, 0.8);
+    transform: scale(1.05);
+}
+
+.ui-overlay {
+    position: fixed;
+    top: 20px;
+    left: 80px;
+    z-index: 100;
+    color: white;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+}
+
+.ui-overlay.hidden {
+    transform: translateX(-500px);
+}
+
+.ui-overlay > * {
+    pointer-events: auto;
+}
+
+.control-panel {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: 250px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    font-weight: 300;
+    letter-spacing: 2px;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+button {
+    background: rgba(66, 133, 244, 0.8);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+button:hover {
+    background: rgba(66, 133, 244, 1);
+    transform: translateY(-2px);
+}
+
+.info-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 12px;
+    max-width: 300px;
+}
+
+.info-item {
+    margin-bottom: 5px;
+}
+
+.zoom-controls {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.zoom-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.zoom-btn:hover {
+    background: rgba(66, 133, 244, 0.8);
+    transform: scale(1.1);
+}
+
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.planet-info-panel {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%) translateX(120%);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    max-width: 350px;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 102;
+    transition: transform 0.4s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.planet-info-panel.visible {
+    transform: translateY(-50%) translateX(0);
+}
+
+.planet-info-panel h2 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    border-bottom: 2px solid rgba(66, 133, 244, 0.5);
+    padding-bottom: 10px;
+}
+
+.planet-info-panel .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    background: rgba(255, 59, 48, 0.8);
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 1;
+    transition: all 0.3s;
+}
+
+.planet-info-panel .close-btn:hover {
+    background: rgba(255, 59, 48, 1);
+    transform: rotate(90deg);
+}
+
+#planetDetails {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+#planetDetails .info-row {
+    margin-bottom: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid rgba(66, 133, 244, 0.6);
+}
+
+#planetDetails .info-label {
+    font-weight: 600;
+    color: rgba(66, 133, 244, 1);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+}
+
+#planetDetails .info-value {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.planet-info-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.planet-info-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.planet-info-panel::-webkit-scrollbar-thumb {
+    background: rgba(66, 133, 244, 0.5);
+    border-radius: 10px;
+}
+
+.planet-info-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(66, 133, 244, 0.8);
+}

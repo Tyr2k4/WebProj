@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Space Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Loading Earth...</div>
+    </div>
+
+    <button class="toggle-nav-btn" onclick="toggleNavBar()">☰</button>
+
+    <div class="ui-overlay" id="navBar">
+        <div class="control-panel">
+            <h1>🌍 SPACE EXPLORER</h1>
+            <div class="control-group">
+                <button onclick="resetView()">Reset View</button>
+                <button onclick="toggleRotation()">Toggle Rotation</button>
+                <button onclick="toggleStars()">Toggle Stars</button>
+                <button onclick="toggleClouds()">Toggle Clouds</button>
+                <button onclick="toggleSolarSystem()">Toggle Solar System</button>
+            </div>
+            <div class="control-group">
+                <label>Quick Navigation</label>
+                <button onclick="viewPlanet('earth')">Earth</button>
+                <button onclick="viewPlanet('sun')">Sun</button>
+                <button onclick="viewPlanet('mercury')">Mercury</button>
+                <button onclick="viewPlanet('venus')">Venus</button>
+                <button onclick="viewPlanet('mars')">Mars</button>
+                <button onclick="viewPlanet('jupiter')">Jupiter</button>
+                <button onclick="viewPlanet('saturn')">Saturn</button>
+                <button onclick="viewPlanet('uranus')">Uranus</button>
+                <button onclick="viewPlanet('neptune')">Neptune</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="planet-info-panel" id="planetInfo">
+        <button class="close-btn" onclick="closePlanetInfo()">×</button>
+        <h2 id="planetName"></h2>
+        <div id="planetDetails"></div>
+    </div>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <button class="zoom-btn" onclick="zoomOut()">−</button>
+    </div>
+
+    <div class="info-panel">
+        <div class="info-item"><strong>Controls:</strong></div>
+        <div class="info-item">• Left Click + Drag: Rotate</div>
+        <div class="info-item">• Scroll: Zoom</div>
+        <div class="info-item">• Right Click + Drag: Pan</div>
+        <div class="info-item" id="zoomLevel">• Zoom: 100%</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
