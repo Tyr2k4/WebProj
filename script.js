@@ -1,6 +1,7 @@
 // Global variables
 let scene, camera, renderer, earth, clouds, stars;
 let isRotating = true;
+let isOrbiting = true; // New variable to control orbit movement
 let showStars = true;
 let showClouds = true;
 let showSolarSystem = false;
@@ -444,6 +445,7 @@ function onCanvasClick(e) {
         }
         
         if (planetMesh.userData.name) {
+            viewPlanet(planetMesh.userData.name); // Move camera to planet
             showPlanetInfo(planetMesh.userData.name);
         }
     }
@@ -469,7 +471,8 @@ function animate() {
     if (showSolarSystem) {
         // Animate planets in orbits
         solarSystemGroup.children.forEach(child => {
-            if (child.userData.orbitSpeed) {
+            // Check isOrbiting flag
+            if (child.userData.orbitSpeed && isOrbiting) {
                 child.userData.angle += child.userData.orbitSpeed;
                 child.position.x = Math.cos(child.userData.angle) * child.userData.distance;
                 child.position.z = Math.sin(child.userData.angle) * child.userData.distance;
@@ -509,6 +512,7 @@ function resetView() {
     targetRotationY = 0;
     camera.position.set(0, 0, 3);
     updateZoomLevel();
+    isOrbiting = true; // Resume orbits when resetting view
 }
 
 function toggleRotation() {
@@ -535,6 +539,7 @@ function toggleSolarSystem() {
         clouds.visible = false;
         camera.position.set(0, 30, 60);
         camera.lookAt(0, 0, 0);
+        isOrbiting = true; // Ensure orbits are active when entering Solar System view
     } else {
         // Show Earth when hiding solar system
         earth.visible = true;
@@ -565,6 +570,7 @@ function viewPlanet(planetName) {
             planet.position.z + distance
         );
         camera.lookAt(planet.position);
+        isOrbiting = false; // Stop orbits to view the planet
     }
 }
 
