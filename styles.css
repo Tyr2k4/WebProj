@@ -49,11 +49,15 @@ body {
     z-index: 100;
     color: white;
     pointer-events: none;
-    transition: transform 0.3s ease;
+    /* Added opacity transition for smoother and more reliable hiding */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
 }
 
 .ui-overlay.hidden {
     transform: translateX(-500px);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .ui-overlay > * {
