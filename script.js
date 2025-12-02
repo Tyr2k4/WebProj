@@ -1,7 +1,7 @@
 // Global variables
 let scene, camera, renderer, earth, clouds, stars;
 let isRotating = true;
-let isOrbiting = true; // New variable to control orbit movement
+let isOrbiting = true;
 let showStars = true;
 let showClouds = true;
 let showSolarSystem = false;
@@ -13,6 +13,29 @@ let rotationX = 0, rotationY = 0;
 let planets = {};
 let solarSystemGroup;
 let raycaster, mouse;
+let currentTarget = new THREE.Vector3(0, 0, 0);
+
+// Texture Loader Setup
+const textureLoader = new THREE.TextureLoader();
+// Using a reliable CDN for planet textures
+const textureBase = 'https://solartextures.b-cdn.net/';
+
+const planetTextures = {
+    sun: '2k_sun.jpg',
+    mercury: '2k_mercury.jpg',
+    venus: '2k_venus_surface.jpg',
+    earth: '2k_earth_daymap.jpg',
+    mars: '2k_mars.jpg',
+    jupiter: '2k_jupiter.jpg',
+    saturn: '2k_saturn.jpg',
+    uranus: '2k_uranus.jpg',
+    neptune: '2k_neptune.jpg',
+    saturn_ring: '2k_saturn_ring_alpha.png'
+};
+
+// Zoom constraints
+let minZoom = 1.5;
+let maxZoom = 10;
 
 // Planet information database
 const planetInfo = {
@@ -131,6 +154,21 @@ const planetInfo = {
     }
 };
 
+// Helper to load texture with error handling
+function loadTexture(url, fallbackColor) {
+    return new Promise((resolve) => {
+        textureLoader.load(
+            url,
+            (texture) => resolve(texture), // Success
+            undefined,
+            () => { 
+                console.warn(`Failed to load texture: ${url}`);
+                resolve(null); // Error
+            }
+        );
+    });
+}
+
 // Initialize the scene
 function init() {
     // Scene
@@ -147,20 +185,24 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0x404040, 1);
+    const ambientLight = new THREE.AmbientLight(0x404040, 1.5); // Increased intensity for textures
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
     directionalLight.position.set(5, 3, 5);
     scene.add(directionalLight);
 
-    // Earth
+    // Detailed Earth for Main View
     const earthGeometry = new THREE.SphereGeometry(1, 64, 64);
-    const earthTexture = createEarthTexture();
+    
+    // Load Earth textures directly
+    const earthMap = textureLoader.load(textureBase + '2k_earth_daymap.jpg');
+    // We can add normal/specular maps later if needed, but keeping it simple to ensure loading
+    
     const earthMaterial = new THREE.MeshPhongMaterial({
-        map: earthTexture,
-        bumpScale: 0.05,
-        shininess: 10
+        map: earthMap,
+        shininess: 15,
+        color: 0xffffff
     });
 
     earth = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -168,12 +210,15 @@ function init() {
 
     // Clouds
     const cloudsGeometry = new THREE.SphereGeometry(1.01, 64, 64);
-    const cloudsTexture = createCloudsTexture();
+    const cloudsMap = textureLoader.load(textureBase + '2k_earth_clouds.jpg');
+    
     const cloudsMaterial = new THREE.MeshPhongMaterial({
-        map: cloudsTexture,
+        map: cloudsMap,
         transparent: true,
-        opacity: 0.4,
-        depthWrite: false
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+        depthWrite: false,
     });
 
     clouds = new THREE.Mesh(cloudsGeometry, cloudsMaterial);
@@ -201,91 +246,6 @@ function init() {
     document.getElementById('loading').style.display = 'none';
 
     animate();
-}
-
-// Create procedural Earth texture
-function createEarthTexture() {
-    const size = 1024;
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d');
-
-    // Ocean base
-    const oceanGradient = ctx.createLinearGradient(0, 0, 0, size);
-    oceanGradient.addColorStop(0, '#1a3a52');
-    oceanGradient.addColorStop(0.5, '#2b5876');
-    oceanGradient.addColorStop(1, '#1a3a52');
-    ctx.fillStyle = oceanGradient;
-    ctx.fillRect(0, 0, size, size);
-
-    // Continents (simplified)
-    ctx.fillStyle = '#3a5f3a';
-    
-    // North America
-    ctx.beginPath();
-    ctx.ellipse(200, 250, 150, 200, -0.3, 0, Math.PI * 2);
-    ctx.fill();
-
-    // South America
-    ctx.beginPath();
-    ctx.ellipse(280, 600, 100, 180, 0.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Europe/Africa
-    ctx.beginPath();
-    ctx.ellipse(550, 350, 120, 250, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Asia
-    ctx.beginPath();
-    ctx.ellipse(780, 280, 180, 200, 0.1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Add texture variation
-    for (let i = 0; i < 5000; i++) {
-        const x = Math.random() * size;
-        const y = Math.random() * size;
-        const radius = Math.random() * 3;
-        ctx.fillStyle = `rgba(${50 + Math.random() * 100}, ${80 + Math.random() * 100}, ${50 + Math.random() * 80}, 0.3)`;
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    const texture = new THREE.CanvasTexture(canvas);
-    return texture;
-}
-
-// Create clouds texture
-function createCloudsTexture() {
-    const size = 512;
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0)';
-    ctx.fillRect(0, 0, size, size);
-
-    // Random clouds
-    for (let i = 0; i < 100; i++) {
-        const x = Math.random() * size;
-        const y = Math.random() * size;
-        const radius = 20 + Math.random() * 40;
-        
-        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    const texture = new THREE.CanvasTexture(canvas);
-    return texture;
 }
 
 // Create starfield
@@ -316,7 +276,7 @@ function createSolarSystem() {
     solarSystemGroup.visible = false;
     scene.add(solarSystemGroup);
 
-    // Planet data: [distance from sun, size, color, name, orbit speed]
+    // Planet data: [distance, size, fallback_color, name, orbitSpeed]
     const planetData = [
         [0, 4, 0xFDB813, 'sun', 0],
         [8, 0.4, 0x8C7853, 'mercury', 0.04],
@@ -331,7 +291,39 @@ function createSolarSystem() {
 
     planetData.forEach(([distance, size, color, name, orbitSpeed]) => {
         const geometry = new THREE.SphereGeometry(size, 32, 32);
-        const material = new THREE.MeshPhongMaterial({ color });
+        
+        // Define material variable
+        let material;
+
+        // Try to get texture URL
+        const textureUrl = planetTextures[name] ? (textureBase + planetTextures[name]) : null;
+
+        // Create initial material with fallback color
+        // If texture loads, it will update automatically
+        if (name === 'sun') {
+            material = new THREE.MeshBasicMaterial({ 
+                color: color // Start with color
+            });
+            if (textureUrl) {
+                textureLoader.load(textureUrl, (tex) => {
+                    material.map = tex;
+                    material.color.setHex(0xffffff); // Reset color to white so texture shows
+                    material.needsUpdate = true;
+                });
+            }
+        } else {
+            material = new THREE.MeshPhongMaterial({ 
+                color: color // Start with color
+            });
+            if (textureUrl) {
+                textureLoader.load(textureUrl, (tex) => {
+                    material.map = tex;
+                    material.color.setHex(0xffffff); // Reset color to white
+                    material.needsUpdate = true;
+                });
+            }
+        }
+
         const planet = new THREE.Mesh(geometry, material);
 
         // Create orbit line
@@ -351,12 +343,23 @@ function createSolarSystem() {
         // Add rings to Saturn
         if (name === 'saturn') {
             const ringGeometry = new THREE.RingGeometry(size * 1.2, size * 2, 64);
+            // Try to load ring texture
+            const ringTexUrl = textureBase + '2k_saturn_ring_alpha.png';
             const ringMaterial = new THREE.MeshBasicMaterial({
-                color: 0xC9A86A,
+                color: 0xC9A86A, // Fallback color
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.6
+                opacity: 0.8
             });
+
+            textureLoader.load(ringTexUrl, (tex) => {
+                ringMaterial.map = tex;
+                ringMaterial.color.setHex(0xffffff);
+                ringMaterial.needsUpdate = true;
+            }, undefined, () => {
+                 // Keep fallback color if fails
+            });
+
             const ring = new THREE.Mesh(ringGeometry, ringMaterial);
             ring.rotation.x = Math.PI / 2;
             planet.add(ring);
@@ -453,8 +456,15 @@ function onCanvasClick(e) {
 
 function onWheel(e) {
     e.preventDefault();
-    const delta = e.deltaY * 0.001;
-    camera.position.z = Math.max(1.5, Math.min(10, camera.position.z + delta));
+    const delta = e.deltaY * 0.001 * (showSolarSystem ? 5 : 1);
+    // Use translateZ to move forward/backward along the viewing axis
+    camera.translateZ(delta);
+    
+    // Simple clamp for Earth view only to prevent going inside
+    if (!showSolarSystem && camera.position.length() < 1.2) {
+         camera.position.setLength(1.2);
+    }
+    
     updateZoomLevel();
 }
 
@@ -480,9 +490,9 @@ function animate() {
             }
         });
 
-        // Make sun glow/pulse
+        // Make sun glow/pulse (rotate texture)
         if (planets.sun) {
-            planets.sun.rotation.y += 0.001;
+            planets.sun.rotation.y -= 0.0005;
         }
     } else {
         // Smooth rotation for Earth view
@@ -494,7 +504,7 @@ function animate() {
 
         if (showClouds) {
             clouds.rotation.x = rotationX;
-            clouds.rotation.y = rotationY + 0.001;
+            clouds.rotation.y = rotationY + 0.0005; // Clouds move slightly faster
         }
 
         // Auto rotation
@@ -511,12 +521,19 @@ function resetView() {
     targetRotationX = 0;
     targetRotationY = 0;
     camera.position.set(0, 0, 3);
+    camera.lookAt(0, 0, 0);
+    currentTarget.set(0, 0, 0);
     updateZoomLevel();
     isOrbiting = true; // Resume orbits when resetting view
 }
 
 function toggleRotation() {
-    isRotating = !isRotating;
+    // Acts as a Play/Pause button for both modes
+    if (showSolarSystem) {
+        isOrbiting = !isOrbiting;
+    } else {
+        isRotating = !isRotating;
+    }
 }
 
 function toggleStars() {
@@ -539,6 +556,7 @@ function toggleSolarSystem() {
         clouds.visible = false;
         camera.position.set(0, 30, 60);
         camera.lookAt(0, 0, 0);
+        currentTarget.set(0, 0, 0);
         isOrbiting = true; // Ensure orbits are active when entering Solar System view
     } else {
         // Show Earth when hiding solar system
@@ -546,6 +564,7 @@ function toggleSolarSystem() {
         clouds.visible = showClouds;
         resetView();
     }
+    updateZoomLevel();
 }
 
 function viewPlanet(planetName) {
@@ -570,23 +589,34 @@ function viewPlanet(planetName) {
             planet.position.z + distance
         );
         camera.lookAt(planet.position);
+        currentTarget.copy(planet.position); // Update current target
         isOrbiting = false; // Stop orbits to view the planet
+        updateZoomLevel();
     }
 }
 
 function zoomIn() {
-    camera.position.z = Math.max(1.5, camera.position.z - 0.5);
+    const step = showSolarSystem ? 2 : 0.5;
+    camera.translateZ(-step); // Move forward along view axis
     updateZoomLevel();
 }
 
 function zoomOut() {
-    camera.position.z = Math.min(10, camera.position.z + 0.5);
+    const step = showSolarSystem ? 2 : 0.5;
+    camera.translateZ(step); // Move backward along view axis
     updateZoomLevel();
 }
 
 function updateZoomLevel() {
-    const zoomPercent = Math.round((10 - camera.position.z) / 8.5 * 100);
-    document.getElementById('zoomLevel').textContent = `• Zoom: ${zoomPercent}%`;
+    // Calculate approximate zoom percentage based on distance to target
+    const distance = camera.position.distanceTo(currentTarget);
+    const maxDist = showSolarSystem ? 100 : 10;
+    const minDist = showSolarSystem ? 5 : 1.5;
+    
+    // Clamp visualization
+    const pct = Math.max(0, Math.min(100, (1 - (distance - minDist) / (maxDist - minDist)) * 100));
+    
+    document.getElementById('zoomLevel').textContent = `• Zoom: ${Math.round(pct)}%`;
 }
 
 // Navigation bar toggle
