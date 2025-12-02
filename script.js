@@ -17,11 +17,12 @@ let currentTarget = new THREE.Vector3(0, 0, 0);
 
 // Texture Loader Setup
 const textureLoader = new THREE.TextureLoader();
+textureLoader.setCrossOrigin('anonymous'); // Ensure CDN access
 // Using a reliable CDN for planet textures
 const textureBase = 'https://solartextures.b-cdn.net/';
 
 const planetTextures = {
-    sun: '2k_sun.jpg',
+    sun: '8k_sun.jpg', // Upgraded to 8K for realism
     mercury: '2k_mercury.jpg',
     venus: '2k_venus_surface.jpg',
     earth: '2k_earth_daymap.jpg',
@@ -197,7 +198,6 @@ function init() {
     
     // Load Earth textures directly
     const earthMap = textureLoader.load(textureBase + '2k_earth_daymap.jpg');
-    // We can add normal/specular maps later if needed, but keeping it simple to ensure loading
     
     const earthMaterial = new THREE.MeshPhongMaterial({
         map: earthMap,
@@ -539,11 +539,6 @@ function toggleRotation() {
 function toggleStars() {
     showStars = !showStars;
     stars.visible = showStars;
-}
-
-function toggleClouds() {
-    showClouds = !showClouds;
-    clouds.visible = showClouds;
 }
 
 function toggleSolarSystem() {
