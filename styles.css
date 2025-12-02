@@ -21,14 +21,14 @@ body {
     top: 20px;
     left: 20px;
     z-index: 101;
-    width: 50px;
-    height: 50px;
+    width: 40px; /* Reduced from 50px */
+    height: 40px; /* Reduced from 50px */
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    border-radius: 8px;
     color: white;
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -45,11 +45,10 @@ body {
 .ui-overlay {
     position: fixed;
     top: 20px;
-    left: 80px;
+    left: 70px; /* Adjusted position */
     z-index: 100;
     color: white;
     pointer-events: none;
-    /* Added opacity transition for smoother and more reliable hiding */
     transition: transform 0.3s ease, opacity 0.3s ease;
     opacity: 1;
 }
@@ -67,27 +66,27 @@ body {
 .control-panel {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
-    padding: 20px;
+    padding: 12px; /* Significantly reduced padding */
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    min-width: 250px;
+    min-width: 180px; /* Significantly reduced width */
 }
 
 h1 {
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 16px; /* Reduced font size */
+    margin-bottom: 10px;
     font-weight: 300;
     letter-spacing: 2px;
 }
 
 .control-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
-    font-size: 12px;
+    margin-bottom: 3px;
+    font-size: 10px; /* Reduced font size */
     text-transform: uppercase;
     letter-spacing: 1px;
     opacity: 0.8;
@@ -97,13 +96,13 @@ button {
     background: rgba(66, 133, 244, 0.8);
     border: none;
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 6px 10px; /* Reduced padding */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px; /* Reduced font size */
     transition: all 0.3s;
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 button:hover {
@@ -140,8 +139,8 @@ button:hover {
 }
 
 .zoom-btn {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
