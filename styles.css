@@ -21,8 +21,8 @@ body {
     top: 20px;
     left: 20px;
     z-index: 101;
-    width: 40px; /* Reduced from 50px */
-    height: 40px; /* Reduced from 50px */
+    width: 40px;
+    height: 40px;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -45,7 +45,7 @@ body {
 .ui-overlay {
     position: fixed;
     top: 20px;
-    left: 70px; /* Adjusted position */
+    left: 70px;
     z-index: 100;
     color: white;
     pointer-events: none;
@@ -66,27 +66,27 @@ body {
 .control-panel {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
-    padding: 12px; /* Significantly reduced padding */
+    padding: 10px; 
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    min-width: 180px; /* Significantly reduced width */
+    min-width: 150px;
 }
 
 h1 {
-    font-size: 16px; /* Reduced font size */
-    margin-bottom: 10px;
+    font-size: 14px; 
+    margin-bottom: 8px;
     font-weight: 300;
     letter-spacing: 2px;
 }
 
 .control-group {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 label {
     display: block;
     margin-bottom: 3px;
-    font-size: 10px; /* Reduced font size */
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 1px;
     opacity: 0.8;
@@ -96,13 +96,13 @@ button {
     background: rgba(66, 133, 244, 0.8);
     border: none;
     color: white;
-    padding: 6px 10px; /* Reduced padding */
+    padding: 5px 8px; 
     border-radius: 4px;
     cursor: pointer;
-    font-size: 12px; /* Reduced font size */
+    font-size: 11px; 
     transition: all 0.3s;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 button:hover {
